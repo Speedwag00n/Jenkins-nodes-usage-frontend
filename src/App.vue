@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <NodesTable :nodes="nodesNames" :nodesStats="stats"/>
+    <NodesTable :nodes="nodesNames" :nodesStats="stats" :dates="dates"/>
 
-    <Chart :chartData="chartData"/>
+    <Chart :items="nodesNames" :chartData="chartData" v-on:nodechange="changeChart"/>
   </div>
 </template>
 
@@ -21,17 +21,10 @@ export default {
   data: () => ({
     nodesNames: [],
     stats: [],
+    currentNode: '',
+    dates: [],
 
-    chartData: [
-      ['Date', 'In use'],
-      ['2019-12-15', 8],
-      ['2019-12-14', 7],
-      ['2019-12-13', 6],
-      ['2019-12-12', 4],
-      ['2019-12-11', 9],
-      ['2019-12-10', 12],
-      ['2019-12-09', 1]
-    ]
+    chartData: []
   }),
   methods: {
     getStringDate: function(date) {
@@ -39,13 +32,45 @@ export default {
       let mouth = String(date.getMonth() + 1).padStart(2, '0');
       let year = date.getFullYear();
       return year + "-" + mouth + "-" + day;
+    },
+
+    generateDatesForWeek() {
+      let date = new Date();
+      date = new Date(date.getTime() - (60 * 60 * 24 * 1000 * 6));
+      for (let i = 0; i < 7; i ++) {
+        this.dates.push(this.getStringDate(date));
+        date = new Date(date.getTime() + (60 * 60 * 24 * 1000 * 1));
+      }
+    },
+
+    changeChart: function(value) {
+      this.currentNode = value;
+      let index = 0;
+      for (let i = 0; i < this.nodesNames.length; i++) {
+        if (value === this.nodesNames[i].name) {
+          index = i;
+          break;
+        }
+      }
+      this.updateChartData(index);
+    },
+
+    updateChartData: function(index) {
+      let currentStat = this.stats[index];
+      let newData = [];
+      newData.push(['Data', 'In use']);
+      currentStat.forEach(function(item) {
+        newData.push([item.date, item.duration]);
+      });
+      this.chartData = newData;
     }
   },
   created() {
-    let date = new Date();
-    let todayString = this.getStringDate(date);
-    date = new Date(date.getTime() - (60*60*24*6*1000)); //week ago
-    let weekAgoString = this.getStringDate(date);
+    this.generateDatesForWeek();
+
+    let todayString = this.dates[this.dates.length - 1];
+    let weekAgoString = this.dates[0];
+
     let stats = this.stats
     axios
       .get('http://localhost:5000/api/node')

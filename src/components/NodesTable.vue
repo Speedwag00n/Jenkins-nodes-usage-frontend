@@ -3,7 +3,7 @@
     <table class="node-table">
       <tr>
         <th>Node</th>
-        <th v-for="(item, index) in nodesStats[0]" v-bind:key="index">{{item.date}}</th>
+                <th v-for="(item, index) in dates" v-bind:key="index">{{item}}</th>
       </tr>
       <tr v-for="(stats, statsIndex) in nodesStats" v-bind:key="statsIndex">
         <td>{{nodes[statsIndex].name}}</td>
@@ -17,7 +17,7 @@
 
 export default {
   name: 'NodesTable',
-  props: ['nodes', 'nodesStats'],
+  props: ['nodes', 'dates', 'nodesStats'],
   components: {
 
   },
