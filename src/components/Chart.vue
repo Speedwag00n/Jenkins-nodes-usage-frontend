@@ -7,6 +7,7 @@
       </div>
     </div>
     <GChart
+      v-bind:class="{empty: isEmpty}"
       type="ColumnChart"
       :data="chartData"
       :options="chartOptions"
@@ -35,10 +36,17 @@ export default {
     onNodeChange: function(){
       this.$emit('nodechange', this.currentNode);
     }
+  },
+  computed: {
+    isEmpty: function() {
+      return this.chartData.length == 0;
+    }
   }
 }
 </script>
 
 <style scoped>
-
+.empty {
+  display: none;
+}
 </style>
