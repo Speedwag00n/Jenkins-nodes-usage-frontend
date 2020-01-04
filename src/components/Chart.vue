@@ -4,8 +4,8 @@
       <h1 class="main-header">Select node</h1>
       <div class="chart-menu">
         <div class="menu-item" v-for="(item, index) in items" v-bind:key="index">
-          <label class="menu-item-label">{{item.name}}</label>
-          <input type="radio" :value="item.name" v-model="currentNode" v-on:change="onNodeChange">
+          <label class="menu-item-label">{{item}}</label>
+          <input type="radio" :value="index" v-model="currentNode" v-on:change="onNodeChange">
         </div>
       </div>
     </div>

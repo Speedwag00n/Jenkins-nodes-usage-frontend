@@ -6,8 +6,8 @@
         <th v-for="(item, index) in dates" v-bind:key="index">{{item}}</th>
       </tr>
       <tr v-for="(stats, statsIndex) in nodesStats" v-bind:key="statsIndex">
-        <td>{{nodes[statsIndex].name}}</td>
-        <td v-for="(item, itemIndex) in stats" v-bind:key="itemIndex">{{Math.round(item.duration)}}</td> <!--in seconds-->
+        <td>{{stats.node_name}}</td>
+        <td v-for="(item, itemIndex) in stats.usages" v-bind:key="itemIndex">{{Math.round(item.duration)}}</td> <!--in seconds-->
       </tr>
     </table>
   </div>
@@ -17,7 +17,7 @@
 
 export default {
   name: 'NodesTable',
-  props: ['nodes', 'dates', 'nodesStats'],
+  props: ['dates', 'nodesStats'],
   components: {
 
   },

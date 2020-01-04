@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <NodesTable :nodes="nodesNames" :nodesStats="stats" :dates="dates"/>
+    <NodesTable :nodesStats="stats" :dates="dates"/>
 
     <Chart :items="nodesNames" :chartData="chartData" v-on:nodechange="changeChart"/>
   </div>
@@ -19,8 +19,8 @@ export default {
     NodesTable
   },
   data: () => ({
-    nodesNames: [],
     stats: [],
+    nodesNames: [],
     currentNode: '',
     dates: [],
 
@@ -43,25 +43,15 @@ export default {
       }
     },
 
-    changeChart: function(value) {
-      this.currentNode = value;
-      let index = 0;
-      for (let i = 0; i < this.nodesNames.length; i++) {
-        if (value === this.nodesNames[i].name) {
-          index = i;
-          break;
-        }
-      }
-      this.updateChartData(index);
-    },
-
-    updateChartData: function(index) {
-      let currentStat = this.stats[index];
+    changeChart: function(index) {
+      let currentStat = this.stats[index].usages;
       let newData = [];
       newData.push(['Data', 'In use']);
-      currentStat.forEach(function(item) {
-        newData.push([item.date, item.duration]);
-      });
+      currentStat.forEach(
+        function(item) {
+          newData.push([item.date, item.duration]);
+        }
+      );
       this.chartData = newData;
     }
   },
@@ -71,21 +61,18 @@ export default {
     let todayString = this.dates[this.dates.length - 1];
     let weekAgoString = this.dates[0];
 
-    let stats = this.stats
+    let nodesNames = this.nodesNames;
+
     axios
-      .get('http://localhost:5000/api/node')
+      .get('http://localhost:5000/api/working/usage/period' + '?stop_date=' + todayString + '&start_date=' + weekAgoString)
       .then(
         response => {
-          this.nodesNames = response.data
-          this.nodesNames.forEach(function(node) {
-            axios
-              .get('http://localhost:5000/api/working/usage/period/' + node.name + '?stop_date=' + todayString + '&start_date=' + weekAgoString)
-              .then(
-                response => {
-                  stats.push(response.data)
-                }
-              )
-          });
+          this.stats = response.data;
+          this.stats.forEach(
+            function(item) {
+              nodesNames.push(item.node_name);
+            }
+          )
         }
       );
   }
