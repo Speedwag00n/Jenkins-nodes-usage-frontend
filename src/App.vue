@@ -64,7 +64,7 @@ export default {
     let nodesNames = this.nodesNames;
 
     axios
-      .get('http://localhost:5000/api/working/usage/period' + '?stop_date=' + todayString + '&start_date=' + weekAgoString)
+      .get('http://localhost:81/api/working/usage/period' + '?stop_date=' + todayString + '&start_date=' + weekAgoString)
       .then(
         response => {
           this.stats = response.data;
